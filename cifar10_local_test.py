@@ -5,6 +5,8 @@ import numpy as np
 from PIL import Image
 import os
 import matplotlib.pyplot as plt
+
+#훈련하고 다르게 test나 실제 사용할때는 학습된 모델을 로딩
 from tensorflow.keras.models import load_model
 
 test_dir = './cifar-10/test'
@@ -49,7 +51,10 @@ def predict_in_batches(model, image_dir, ids, batch_size=1000):
         batch_ids = ids[start:start + batch_size]
         x_batch = load_images(image_dir, batch_ids)
         x_batch = x_batch.astype('float32') / 255.0
+
+        #test 사진 인식 좀 해줘
         preds = model.predict(x_batch, verbose=0)
+
         all_preds.append(preds)
         print(f'{start + len(batch_ids)} / {len(ids)} 완료')
 
@@ -62,7 +67,7 @@ test_pred_names = [idx_to_class[idx] for idx in test_pred_labels]
 
 submission_df = pd.DataFrame({
     'id' : test_ids,
-    'label': test_pred_labels
+    'label': test_pred_names
 })
 
 submission_df.to_csv(submission_save_path, index= False)
